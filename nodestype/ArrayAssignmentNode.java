@@ -10,6 +10,18 @@ public class ArrayAssignmentNode extends ASTNode {
         this.arrayIndex = arrayIndex;
         this.expression = expression;
     }
+    
+    public String getVarName() {
+        return this.varName;
+    }
+
+    public ASTNode getArrayIndex() {
+        return this.arrayIndex;
+    }
+
+    public ASTNode getExpression() {
+        return this.expression;
+    }
 
     public ASTNode getType() {
         return this.expression;

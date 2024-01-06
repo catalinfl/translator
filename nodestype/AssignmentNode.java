@@ -9,6 +9,14 @@ public class AssignmentNode extends ASTNode {
         this.expression = expression;
     }
 
+    public String getVarName() {
+        return this.identifier;
+    }
+
+    public ASTNode getExpression() {
+        return this.expression;
+    }
+
     @Override
     public String evaluate() {
         return this.identifier + " = " + this.expression.evaluate() + ";";

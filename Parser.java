@@ -48,8 +48,6 @@ public class Parser extends ASTNode {
                 }
                 if (tokens.get(pos + 1).getType() == Token.Type.EQUALS) {
                     program.addStatement(assignment());
-                } else if (tokens.get(pos + 1).getType() == Token.Type.BRACKET_OPEN) {
-                    program.addStatement(arrayAssignment(token.getValue()));
                 } else {
                     program.addStatement(expression());
                 }
@@ -152,14 +150,7 @@ public class Parser extends ASTNode {
                 consume(Token.Type.EQUAL);
                 ASTNode right = term();
                 node = new OperatorNode("==", node, right);
-            } else if (token.getType() == Token.Type.IDENTIFIER) {
-                if (tokens.get(pos + 1).getType() == Token.Type.BRACKET_OPEN) {
-                    return arrayAccess(null);
-                } else {
-                    return new IdentifierNode(token.getValue());
-                }
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -215,9 +206,40 @@ public class Parser extends ASTNode {
                 node = new StringNode("}");
                 break;
             case IDENTIFIER:
-                node = new IdentifierNode(token.getValue());
+            String varName = token.getValue();
+            if (pos < tokens.size() && tokens.get(pos).getType() == Token.Type.BRACKET_OPEN) {
+                consume(Token.Type.BRACKET_OPEN);
+                ASTNode index = expression();
+                if (tokens.get(pos++).getType() != Token.Type.BRACKET_CLOSE) {
+                    throw new RuntimeException("Expected ']' after array index");
+                }
+                node = new ArrayAccessNode(varName, index);
+            } else {
+                node = new IdentifierNode(varName);
+            }
+            break;
+            case PLUS:
+                node = new OperatorNode("+", null, null);
                 break;
-            
+            case MINUS:
+                node = new OperatorNode("-", null, null);
+                break;
+            case MULTIPLY:
+                node = new OperatorNode("*", null, null);
+                break; 
+            case DIVIDE:
+                node = new OperatorNode("/", null, null);
+                break;
+            case EQUAL:
+                node = new OperatorNode("==", null, null);
+                break;
+            case BRACKET_OPEN:
+                node = new StringNode("[");
+                break;
+            case BRACKET_CLOSE:
+                node = new StringNode("]");
+                break;
+
             default:
                 throw new RuntimeException("Unexpected token: " + token.getValue() + " " + token.getLine());
         }
@@ -284,37 +306,34 @@ public class Parser extends ASTNode {
 
 
     
-private ASTNode arrayAccess(String identifier) {
-    consume(Token.Type.BRACKET_OPEN);
-    ASTNode index = expression();
-    consume(Token.Type.BRACKET_CLOSE);
-    return new ArrayAccessNode(identifier, index);
-}
-
 private ASTNode assignment() {
-    Token identifierToken = tokens.get(pos);
-    String identifier = identifierToken.getValue();
-    consume(Token.Type.IDENTIFIER);
-    if (tokens.get(pos).getType() == Token.Type.BRACKET_OPEN) {
-        return arrayAssignment(identifier);
-    } else if (tokens.get(pos).getType() == Token.Type.EQUALS) {
-        consume(Token.Type.EQUALS);
-        ASTNode expression = expression();
-        return new AssignmentNode(identifier, expression);
-    } else {
-        throw new IllegalArgumentException("Unexpected token: " + tokens.get(pos).getValue());
+    Token token = tokens.get(pos++);
+    if (token.getType() != Token.Type.IDENTIFIER) {
+        throw new RuntimeException("Expected identifier");
     }
-}
-
-private ASTNode arrayAssignment(String identifier) {
-    consume(Token.Type.BRACKET_OPEN);
-    ASTNode index = expression();
-    consume(Token.Type.BRACKET_CLOSE);
-    consume(Token.Type.EQUAL);
+    String varName = token.getValue();
+    if (!declaredVariables.contains(varName)) {
+        throw new RuntimeException("Variable " + varName + " is not declared");
+    }
+    token = tokens.get(pos++);
+    if (token.getType() != Token.Type.EQUALS) {
+        throw new RuntimeException("Expected '='");
+    }
+    if (tokens.get(pos++).getType() == Token.Type.BRACKET_OPEN) {
+        ASTNode arrayIndex = expression();
+        if (tokens.get(pos++).getType() != Token.Type.BRACKET_CLOSE) {
+            throw new RuntimeException("Expected ']'");
+        }
+        if (tokens.get(pos++).getType() != Token.Type.EQUALS) {
+            throw new RuntimeException("Expected '='");
+        }
+        ASTNode expression = expression();
+        return new ArrayAssignmentNode(varName, arrayIndex, expression);
+    } 
+    pos--;
     ASTNode expression = expression();
-    return new ArrayAssignmentNode(identifier, index, expression);
+    return new AssignmentNode(varName, expression);
 }
-
 
     public void consume(Token.Type type) {
         if (pos < tokens.size() && tokens.get(pos).getType() == type) {

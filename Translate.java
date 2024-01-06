@@ -20,6 +20,7 @@ import nodestype.ArrayAccessNode;
 
 public class Translate {
 
+
     
     public String toCCode(ASTNode node, int indentLevel) {
         Set<String> declaredVariables = new HashSet<>();
@@ -78,7 +79,7 @@ public class Translate {
             WhileNode whileNode = (WhileNode) node;
             String conditionCode = toCCode(whileNode.getCondition(), indentLevel);
             String bodyCode = toCCode(whileNode.getBody(), indentLevel + 1);
-            return indent(indentLevel) + "while (" + conditionCode + ") {\n" + bodyCode + indent(indentLevel) + "}\n";
+            return indent(indentLevel) + "while (" + conditionCode + ") {\n" + bodyCode + indent(indentLevel) + "}";
         }
         else if (node instanceof BlockNode) {
             BlockNode blockNode = (BlockNode) node;
@@ -89,10 +90,19 @@ public class Translate {
             return blockCode.toString();
         } else if (node instanceof ArrayAccessNode) {
             return ((ArrayAccessNode) node).evaluate();
-        } else if (node instanceof ArrayAssignmentNode) {
-            return ((ArrayAssignmentNode) node).evaluate();
-        } else if (node instanceof AssignmentNode) {
-            return ((AssignmentNode) node).evaluate();
+        }   else if (node instanceof ArrayAssignmentNode) {
+            ArrayAssignmentNode arrayAssignmentNode = (ArrayAssignmentNode) node;
+            String varName = arrayAssignmentNode.evaluate().split("\\[")[0];
+            String index = arrayAssignmentNode.evaluate().split("\\[")[1].split("\\]")[0];
+            String expression = arrayAssignmentNode.evaluate().split("=")[1].trim();
+            return indent(indentLevel) + varName + "[" + index + "] = " + expression + ";";
+        } 
+        
+        else if (node instanceof AssignmentNode) {
+            AssignmentNode assignmentNode = (AssignmentNode) node;
+            String varName = assignmentNode.evaluate().split("=")[0].trim();
+            String expression = assignmentNode.evaluate().split("=")[1].trim();
+            return indent(indentLevel) + varName + " = " + expression + ";";
         }
         else {
             throw new IllegalArgumentException("Unsupported node type: " + node.getClass().getName());
