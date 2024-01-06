@@ -1,2 +1,4 @@
-print "test" print "hello"
-print "salutr"
+print "test"
+var i[50] var z[10] var k[20]
+35 + 23
+print "saf \n"

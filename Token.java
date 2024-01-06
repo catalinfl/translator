@@ -11,7 +11,20 @@ public class Token {
         EOF,
         PRINT,
         STRING,
-        UNKNOWN
+        VAR,
+        IDENTIFIER,
+        BRACKET_OPEN,
+        BRACKET_CLOSE,
+        NUMBER_LITERAL,
+        UNKNOWN,
+        EQUALS,
+        LESS_THAN,
+        GREATER_THAN,
+        IF,
+        WHILE,
+        END,
+        READ,
+        EOL
     }
 
     private Type type;

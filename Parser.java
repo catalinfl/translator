@@ -1,14 +1,18 @@
 import java.util.ArrayList;
 
 import nodestype.ASTNode;
+import nodestype.AssignmentNode;
 import nodestype.NumberNode;
 import nodestype.OperatorNode;
 import nodestype.PrintNode;
 import nodestype.ProgramNode;
 import nodestype.StringNode;
+import nodestype.VariableDeclarationNode;
 
 public class Parser extends ASTNode {
+
     private ArrayList<Token> tokens;
+    private ArrayList<String> declaredVariables = new ArrayList<>();
     private int pos = 0;
 
     public Parser(ArrayList<Token> tokens) {
@@ -21,7 +25,15 @@ public class Parser extends ASTNode {
             Token token = tokens.get(pos);
             if (token.getType() == Token.Type.PRINT) {
                 program.addStatement(printStatement());
-            } else {
+            } else if (token.getType() == Token.Type.VAR) {
+                program.addStatement(variableDeclaration());
+            }
+                else if (token.getType() == Token.Type.IDENTIFIER && 
+                tokens.get(pos + 1).getType() == Token.Type.EQUALS) {
+                program.addStatement(assignment());
+            } 
+            
+            else {
                 program.addStatement(expression());
             }
         }
@@ -69,30 +81,37 @@ public class Parser extends ASTNode {
     }
 
     private ASTNode factor() {
-    if (pos >= tokens.size()) {
-        throw new RuntimeException("Unexpected end of input");
-    }
-
-    Token token = tokens.get(pos++);
-
-    if (token.getType() == Token.Type.NUMBER) {
-        return new NumberNode(Integer.parseInt(token.getValue()));
-    } else if (token.getType() == Token.Type.PARANTHESIS_OPEN) {
-        ASTNode node = expression();
-        if (tokens.get(pos++).getType() != Token.Type.PARANTHESIS_CLOSE) {
-            throw new RuntimeException("Mismatched parentheses");
+        if (pos >= tokens.size()) {
+            throw new RuntimeException("Unexpected end of input");
         }
+    
+        Token token = tokens.get(pos++);
+        ASTNode node;
+    
+        switch (token.getType()) {
+            case NUMBER:
+                node = new NumberNode(Integer.parseInt(token.getValue()));
+                break;
+            case PARANTHESIS_OPEN:
+                node = expression();
+                if (tokens.get(pos++).getType() != Token.Type.PARANTHESIS_CLOSE) {
+                    throw new RuntimeException("Mismatched parentheses");
+                }
+                break;
+            case PRINT:
+                node = printStatement();
+                break;
+            case STRING:
+                node = new StringNode(token.getValue());
+                break;
+            case EOF:
+                node = new StringNode("}");
+                break;
+            default:
+                throw new RuntimeException("Unexpected token: " + token.getValue());
+        }
+    
         return node;
-    } else if (token.getType() == Token.Type.PRINT) {
-        return printStatement();
-    } else if (token.getType() == Token.Type.STRING) {
-        return new StringNode(token.getValue());
-    } else if (token.getType() == Token.Type.EOF) {
-        return new StringNode("}"); 
-    }
-     else {
-        throw new RuntimeException("Unexpected token: " + token.getValue());
-    }
     }
 
     private ASTNode printStatement() {
@@ -102,6 +121,41 @@ public class Parser extends ASTNode {
         }
         Token token = tokens.get(pos++);
         return new PrintNode(new StringNode(token.getValue()));
+    }
+
+    private ASTNode variableDeclaration() {
+        consume(Token.Type.VAR);
+        if (pos >= tokens.size() || tokens.get(pos).getType() != Token.Type.IDENTIFIER) {
+            throw new RuntimeException("Expected identifier after var");
+        }
+        Token identifierToken = tokens.get(pos++);
+        if (declaredVariables.contains(identifierToken.getValue())) {
+            throw new RuntimeException("Variable " + identifierToken.getValue() + " is already declared");
+        }
+        Integer arraySize = null;
+        if (pos < tokens.size() && tokens.get(pos).getType() == Token.Type.BRACKET_OPEN) {
+            consume(Token.Type.BRACKET_OPEN);
+            if (pos >= tokens.size() || tokens.get(pos).getType() != Token.Type.NUMBER) {
+                throw new RuntimeException("Expected number after [");
+            }
+            Token numberToken = tokens.get(pos++);
+            arraySize = Integer.parseInt(numberToken.getValue());
+            consume(Token.Type.BRACKET_CLOSE);
+        }
+        declaredVariables.add(identifierToken.getValue());
+        return new VariableDeclarationNode(identifierToken.getValue(), arraySize);
+    }
+
+    private ASTNode assignment() {
+        Token identifierToken = tokens.get(pos++);
+        consume(Token.Type.EQUALS);
+        if (pos >= tokens.size() || tokens.get(pos).getType() != Token.Type.NUMBER) {
+            throw new RuntimeException("Expected number after =");
+        }
+        Token numberToken = tokens.get(pos++);
+        
+        Integer value = Integer.parseInt(numberToken.getValue());
+        return new AssignmentNode(identifierToken.getValue(), value);
     }
 
     public void consume(Token.Type type) {

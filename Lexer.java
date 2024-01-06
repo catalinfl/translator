@@ -64,10 +64,21 @@ public class Lexer {
                     pushbackReader.unread(c);
                     if (word.equals("print")) {
                         tokens.add(new Token(Token.Type.PRINT, word, lineNo));
-                    } else {
-                        tokens.add(new Token(Token.Type.UNKNOWN, word, lineNo));
+                    } else if (word.equals("var")) {
+                        tokens.add(new Token(Token.Type.VAR, word, lineNo));
+                    } else if (word.equals("read")) {
+                        tokens.add(new Token(Token.Type.READ, word, lineNo));
+                    } else if (word.equals("while")) {
+                        tokens.add(new Token(Token.Type.WHILE, word, lineNo));
+                    } else if (word.equals("if")) {
+                        tokens.add(new Token(Token.Type.IF, word, lineNo));
+                    } else if (word.equals("end")) {
+                        tokens.add(new Token(Token.Type.END, word, lineNo));
                     }
-                } else if (character == '"') {
+                    else {
+                        tokens.add(new Token(Token.Type.IDENTIFIER, word, lineNo));
+                    }
+                    } else if (character == '"') {
                     String stringLiteral = "";
                     while ((c = pushbackReader.read()) != -1 && (char) c != '"') {
                         stringLiteral += String.valueOf((char) c);
@@ -80,6 +91,9 @@ public class Lexer {
                 // pentru numere
                 else if (Character.isDigit(character)) {
                     String number = String.valueOf(character);
+                    while (Character.isWhitespace((char) (c = pushbackReader.read()))) {
+                        // do nothing
+                    }
                     while (Character.isDigit((char) (c = pushbackReader.read()))) {
                         number += String.valueOf((char) c);
                     }
@@ -101,9 +115,46 @@ public class Lexer {
                     tokens.add(new Token(Token.Type.PARANTHESIS_OPEN, String.valueOf(character), lineNo));
                 } else if (character == ')') {
                     tokens.add(new Token(Token.Type.PARANTHESIS_CLOSE, String.valueOf(character), lineNo));
-                } else {
-                    tokens.add(new Token(Token.Type.UNKNOWN, String.valueOf(character), lineNo));
-                }
+                } else if (character == '=') {
+                    tokens.add(new Token(Token.Type.EQUALS, String.valueOf(character), lineNo));
+                    String number = "";
+                    // Skip over any whitespace characters
+                    while (Character.isWhitespace((char) (c = pushbackReader.read()))) {
+                        // do nothing
+                    }
+                    // Now start reading the number
+                    while (Character.isDigit((char) c)) {
+                        number += String.valueOf((char) c);
+                        c = pushbackReader.read();
+                    }
+                    // Only add the NUMBER token after you've read the number
+                    if (!number.isEmpty()) {
+                        tokens.add(new Token(Token.Type.NUMBER, number, lineNo));
+                    }
+                    pushbackReader.unread(c);
+                } else if (character == '<') {
+                    tokens.add(new Token(Token.Type.LESS_THAN, String.valueOf(character), lineNo));
+                } else if (character == '>') {
+                    tokens.add(new Token(Token.Type.GREATER_THAN, String.valueOf(character), lineNo));
+                } else if (character == '[') {
+                    tokens.add(new Token(Token.Type.BRACKET_OPEN, String.valueOf(character), lineNo));
+                    String number = "";
+                    while (Character.isDigit((char) (c = pushbackReader.read()))) {
+                        number += String.valueOf((char) c);
+                    }
+                    tokens.add(new Token(Token.Type.NUMBER, number, lineNo));
+                    if ((char) c != ']') {
+                        throw new RuntimeException("Expected ']' after array size");
+                    }
+                    tokens.add(new Token(Token.Type.BRACKET_CLOSE, String.valueOf((char) c), lineNo));
+                    // Add this line to consume the whitespace characters
+                    while (Character.isWhitespace((char) (c = pushbackReader.read()))) {
+                        // do nothing
+                    }
+                    pushbackReader.unread(c);
+                } else if (character == ']') {
+                    tokens.add(new Token(Token.Type.BRACKET_CLOSE, String.valueOf(character), lineNo));
+                }                
             }
         } catch (IOException e) {
             e.printStackTrace();

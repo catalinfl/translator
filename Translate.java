@@ -1,9 +1,11 @@
 import nodestype.ASTNode;
+import nodestype.AssignmentNode;
 import nodestype.NumberNode;
 import nodestype.OperatorNode;
 import nodestype.PrintNode;
 import nodestype.ProgramNode;
 import nodestype.StringNode;
+import nodestype.VariableDeclarationNode;
 
 public class Translate {
 
@@ -31,10 +33,19 @@ public class Translate {
             }
         } else if (node instanceof PrintNode) {
         PrintNode printNode = (PrintNode) node;
-        return "cout << " + "\"" + toCCode(printNode.getExpression()) + "\"" + " << endl;";
+        if (printNode.getExpression().evaluate().contains("\\n")) {
+            return "cout << " + "\""  + printNode.getExpression().evaluate().substring(0, printNode.getExpression().evaluate().length() - 3) + "\""  + " << endl;";
+        }
+        return "cout << " + "\"" + toCCode(printNode.getExpression()) + "\"" + ";";
         }
         else if (node instanceof StringNode) {
             return ((StringNode) node).evaluate();
+        }
+        else if (node instanceof VariableDeclarationNode) {
+            return ((VariableDeclarationNode) node).evaluate();
+        }
+        else if (node instanceof AssignmentNode) {
+            return ((AssignmentNode) node).evaluate();
         }
         else {
             throw new IllegalArgumentException("Unsupported node type: " + node.getClass().getName());
