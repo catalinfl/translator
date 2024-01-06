@@ -23,7 +23,7 @@ public static void main(String args[]) {
             ASTNode root = parser.parse();
             root.printTree("");
             Translate translate = new Translate();
-            String s = translate.toCCode(root);
+            String s = translate.toCCode(root, 0);
             System.out.println(s);
         } catch (Exception e) {
             System.out.println(e.getMessage());

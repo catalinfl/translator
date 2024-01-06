@@ -1,4 +1,7 @@
-print "test"
-var i[50] var z[10] var k[20]
-35 + 23
-print "saf \n"
+var z
+z = 3
+var x
+print z
+if x > 3
+    x = 3
+end

@@ -133,9 +133,19 @@ public class Lexer {
                     }
                     pushbackReader.unread(c);
                 } else if (character == '<') {
-                    tokens.add(new Token(Token.Type.LESS_THAN, String.valueOf(character), lineNo));
+                    tokens.add(new Token(Token.Type.SMALLER_THAN, String.valueOf(character), lineNo));
                 } else if (character == '>') {
                     tokens.add(new Token(Token.Type.GREATER_THAN, String.valueOf(character), lineNo));
+                    c = pushbackReader.read();
+                    if (Character.isDigit((char) c)) {
+                        String number = String.valueOf((char) c);
+                        while (Character.isDigit((char) (c = pushbackReader.read()))) {
+                            number += String.valueOf((char) c);
+                        }
+                        tokens.add(new Token(Token.Type.NUMBER, number, lineNo));
+                    } else {
+                        pushbackReader.unread(c);
+                    }
                 } else if (character == '[') {
                     tokens.add(new Token(Token.Type.BRACKET_OPEN, String.valueOf(character), lineNo));
                     String number = "";

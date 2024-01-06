@@ -9,6 +9,21 @@ public class VariableDeclarationNode extends ASTNode {
         this.arraySize = arraySize;
     }
 
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
+    public Integer getArraySize() {
+        return arraySize;
+    }
+
+    // get Expression   
+
+    public ASTNode getExpression() {
+        return this;
+    }
+
+
     @Override
     public String evaluate() {
         if (arraySize == null) {

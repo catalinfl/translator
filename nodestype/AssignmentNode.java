@@ -1,25 +1,17 @@
 package nodestype;
 
 public class AssignmentNode extends ASTNode {
-    private String variableName;
-    private int value;
+    private String identifier;
+    private ASTNode expression;
 
-    public AssignmentNode(String variableName, int value) {
-        this.variableName = variableName;
-        this.value = value;
-    }
-
-    public String getVariableName() {
-        return variableName;
-    }
-
-    public int getValue() {
-        return value;
+    public AssignmentNode(String identifier, ASTNode expression) {
+        this.identifier = identifier;
+        this.expression = expression;
     }
 
     @Override
     public String evaluate() {
-        return this.variableName + " = " + this.value + ";";
+        return this.identifier + " = " + this.expression.evaluate() + ";";
     }
-    
+
 }

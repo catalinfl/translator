@@ -2,10 +2,14 @@ package nodestype;
 
 
 public class NumberNode extends ASTNode {
-    private int value;
+    int value;
 
     public NumberNode(int value) {
         this.value = value;
+    }
+
+    public int getNumber() {
+        return this.value;
     }
 
     @Override
@@ -15,12 +19,12 @@ public class NumberNode extends ASTNode {
 
     @Override
     public String toString() {
-        return "Number: " + this.value;
+        return Integer.toString(this.value);
     }
 
     @Override
     public void printTree(String indent) {
-        System.out.println(indent + "Number: " + this.value);
+        System.out.println(this.value);
     }
 
     

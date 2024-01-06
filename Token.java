@@ -5,6 +5,8 @@ public class Token {
         PLUS,
         MINUS,
         MULTIPLY,
+        EQUAL,
+        SMALLER_THAN,
         DIVIDE,
         PARANTHESIS_OPEN,
         PARANTHESIS_CLOSE,
@@ -18,13 +20,12 @@ public class Token {
         NUMBER_LITERAL,
         UNKNOWN,
         EQUALS,
-        LESS_THAN,
         GREATER_THAN,
         IF,
         WHILE,
         END,
         READ,
-        EOL
+        EOL,
     }
 
     private Type type;
