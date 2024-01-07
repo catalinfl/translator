@@ -64,19 +64,8 @@ public class Lexer {
                     pushbackReader.unread(c);
                     if (word.equals("print")) {
                         tokens.add(new Token(Token.Type.PRINT, word, lineNo));
-                        // Skip over any whitespace characters
                         while (Character.isWhitespace((char) (c = pushbackReader.read()))) {
                             // do nothing
-                        }
-                        // Now start reading the identifier
-                        String identifier = "";
-                        while (Character.isLetterOrDigit((char) c)) {
-                            identifier += String.valueOf((char) c);
-                            c = pushbackReader.read();
-                        }
-                        // Only add the IDENTIFIER token after you've read the identifier
-                        if (!identifier.isEmpty()) {
-                            tokens.add(new Token(Token.Type.IDENTIFIER, identifier, lineNo));
                         }
                         pushbackReader.unread(c);
                     } else if (word.equals("var")) {

@@ -11,6 +11,6 @@ public class ArrayAccessNode extends ASTNode {
 
     @Override
     public String evaluate() {
-        return identifier + "[" + index.evaluate() + "]";
+        return identifier + "[" + index.evaluate().toString() + "]";
     }
 }

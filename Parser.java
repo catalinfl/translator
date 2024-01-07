@@ -177,7 +177,8 @@ public class Parser extends ASTNode {
 
     private ASTNode expression() {
         ASTNode node = term();
-    
+        
+        
         while (pos < tokens.size()) {
             Token token = tokens.get(pos);
             if (token.getType() == Token.Type.PLUS) {
@@ -200,7 +201,8 @@ public class Parser extends ASTNode {
                 consume(Token.Type.EQUAL);
                 ASTNode right = term();
                 node = new OperatorNode("==", node, right);
-            } else {
+            }            
+            else {
                 break;
             }
         }
@@ -416,8 +418,9 @@ private ASTNode assignment() {
     public void consume(Token.Type type) {
         if (pos < tokens.size() && tokens.get(pos).getType() == type) {
             pos++;
-        } else {
-            throw new RuntimeException("Unexpected token consume: " + tokens.get(pos).getValue() + " " + tokens.get(pos).getLine());
+        } 
+        if (pos >= tokens.size()) {
+            throw new RuntimeException("Unexpected end of input");
         }
     }
 
