@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import nodestype.NumberNode;
 import nodestype.OperatorNode;
 import nodestype.PrintNode;
 import nodestype.ProgramNode;
+import nodestype.ReadNode;
 import nodestype.StringNode;
 import nodestype.VariableDeclarationNode;
 import nodestype.WhileNode;
@@ -44,8 +46,26 @@ public class Translate {
             } else {
                 return leftCode + " " + opNode.getOperator() + " " + rightCode;
             }
-        } else if (node instanceof PrintNode) {
+        } else if (node instanceof ReadNode) {
+            ReadNode readNode = (ReadNode) node;
+            ASTNode expression = readNode.getExpression();
+            String identifier;
+            if (expression instanceof IdentifierNode) {
+                identifier = ((IdentifierNode)expression).getName();
+            } else if (expression instanceof ArrayAccessNode) {
+                ArrayAccessNode arrayAccess = (ArrayAccessNode)expression;
+                identifier = arrayAccess.evaluate();
+
+            } else {
+                throw new IllegalArgumentException("Unsupported expression type in ReadNode: " + expression.getClass().getName());
+            }
+            return indent(indentLevel) + "cin >> " + identifier + ";";
+        }
+        else if (node instanceof PrintNode) {
             PrintNode printNode = (PrintNode) node;
+            if (printNode.getExpression() instanceof ArrayAccessNode) {
+                return indent(indentLevel) + "cout << " + printNode.getExpression().evaluate() + ";";
+            }
             if (printNode.getExpression() instanceof IdentifierNode) {
                 return indent(indentLevel) + "cout << " + printNode.getExpression().evaluate() + ";";
             }
@@ -68,8 +88,6 @@ public class Translate {
             return ((IdentifierNode) node).evaluate();
         } else if (node instanceof ArrayDeclarationNode) {
             return indent(indentLevel) + ((ArrayDeclarationNode) node).evaluate();
-        } else if (node instanceof ArrayAssignmentNode) {
-            return indent(indentLevel) + ((ArrayAssignmentNode) node).evaluate();
         } else if (node instanceof IfNode) {
             IfNode ifNode = (IfNode) node;
             String conditionCode = toCCode(ifNode.getCondition(), indentLevel);
@@ -89,20 +107,24 @@ public class Translate {
             }
             return blockCode.toString();
         } else if (node instanceof ArrayAccessNode) {
+            System.out.println("ArrayAccessNode reached");
             return ((ArrayAccessNode) node).evaluate();
-        }   else if (node instanceof ArrayAssignmentNode) {
+        } else if (node instanceof ArrayAssignmentNode) {
             ArrayAssignmentNode arrayAssignmentNode = (ArrayAssignmentNode) node;
+            System.out.println("here");
             String varName = arrayAssignmentNode.evaluate().split("\\[")[0];
             String index = arrayAssignmentNode.evaluate().split("\\[")[1].split("\\]")[0];
             String expression = arrayAssignmentNode.evaluate().split("=")[1].trim();
             return indent(indentLevel) + varName + "[" + index + "] = " + expression + ";";
         } 
-        
         else if (node instanceof AssignmentNode) {
             AssignmentNode assignmentNode = (AssignmentNode) node;
             String varName = assignmentNode.evaluate().split("=")[0].trim();
             String expression = assignmentNode.evaluate().split("=")[1].trim();
             return indent(indentLevel) + varName + " = " + expression + ";";
+        }
+        else if (node instanceof IdentifierNode) {
+            return ((IdentifierNode) node).evaluate();
         }
         else {
             throw new IllegalArgumentException("Unsupported node type: " + node.getClass().getName());

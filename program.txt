@@ -1,7 +1,2 @@
-var z
-var v[1]
-z=i+1
-if x > 2
-    z = v[1]
-    z = z+1
-end
+print v[1]
+print "tes"

@@ -29,6 +29,9 @@ public class ArrayAssignmentNode extends ASTNode {
 
     @Override
     public String evaluate() {
-        return this.varName + "[" + this.arrayIndex.evaluate() + "]" + " = " + this.expression.evaluate() + ";";
+        String varName = this.varName;
+        String index = this.arrayIndex.evaluate();
+        String expression = this.expression.evaluate();
+        return varName + "[" + index + "] = " + expression;
     }
 }

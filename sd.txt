@@ -1,0 +1,34 @@
+var v[10]
+var i
+i = 0
+while i < 10
+    print "v["print i print"]"
+    read v[i]
+    i = i+1
+end
+
+var gata
+gata = 0
+while gata < 0
+    gata = 1
+    i = 0 
+    while i < 9
+        if v[i] > v[i+1]
+            var x x = v[i]
+            gata = 0
+        end
+        i = i+1
+    end
+end
+
+
+
+print "v sortat: \n"
+i = 0
+while i < 9
+    print v[i]
+    print ","
+    i=i+1
+end
+
+
