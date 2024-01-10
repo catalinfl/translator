@@ -134,7 +134,7 @@ public class Parser extends ASTNode {
             }
             token = tokens.get(pos);
         }
-        consume(Token.Type.END);  // Consume the 'end' token
+        consume(Token.Type.END); 
         return new IfNode(condition, body);
     }
 
@@ -169,7 +169,7 @@ public class Parser extends ASTNode {
             }
             token = tokens.get(pos);
         }
-        consume(Token.Type.END);  // Consume the 'end' token
+        consume(Token.Type.END); 
         return new WhileNode(condition, body);
     }
 
@@ -391,7 +391,7 @@ public class Parser extends ASTNode {
         }
         return new ArrayDeclarationNode(varName, arraySize);
     } else {
-        pos--; // Unread the token
+        pos--; 
         return new VariableDeclarationNode(varName, null);
     }
 }

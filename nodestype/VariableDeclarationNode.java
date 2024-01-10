@@ -17,8 +17,6 @@ public class VariableDeclarationNode extends ASTNode {
         return arraySize;
     }
 
-    // get Expression   
-
     public ASTNode getExpression() {
         return this;
     }

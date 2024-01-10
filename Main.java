@@ -7,18 +7,19 @@ public class Main {
     
 public static void main(String args[]) {
     if (args.length < 1) {
-        System.out.println("Provide program.txt as argument");
+        System.out.println("Provide program.aoleu as argument");
         return;
     }
 
-    String filename = args[0];
+    String filename = "program/" + args[0]; // codul de interpretat trebuie sa fie in program/program.txt
+    System.out.println("Watching " + filename);
     Lexer lexer = new Lexer(filename);
     lexer.Tokenize();
     ArrayList<Token> tokens = lexer.getTokens();
 
     FileWriter fw = null;
     try {
-        fw = new FileWriter("tokens.txt");
+        fw = new FileWriter("outputs/tokens.txt");
         for (Token token : tokens) {
             fw.write(token.getType() + " " + token.getValue() + " " + token.getLine() + "\n");
         }
@@ -26,6 +27,8 @@ public static void main(String args[]) {
     } catch (IOException e) {
         e.printStackTrace();
     }
+
+    System.out.println("Tokens generated in output/tokens.txt");
 
     Parser parser = new Parser(tokens);
     ASTNode root = parser.parse();
@@ -36,12 +39,14 @@ public static void main(String args[]) {
     String s = translate.toCCode(root, 0);
 
     try {
-        fw = new FileWriter("output.c");
+        fw = new FileWriter("outputs/output.c");
         fw.write(s);
         fw.close();
     } catch (IOException e) {
         e.printStackTrace();
     }
+
+    System.out.println("C code generated in output/output.c");
 }
 
 }
