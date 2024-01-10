@@ -24,7 +24,7 @@ public class NumberNode extends ASTNode {
 
     @Override
     public void printTree(String indent) {
-        System.out.println(this.value);
+        System.out.println(indent + "Number: " + this.value);
     }
 
     

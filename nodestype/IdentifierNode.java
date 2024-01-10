@@ -20,4 +20,9 @@ public class IdentifierNode extends ASTNode {
         return this.name;
     }
 
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "Identifier: " + name);
+    }
+
 }

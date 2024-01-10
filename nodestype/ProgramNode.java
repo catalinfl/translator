@@ -27,4 +27,12 @@ public class ProgramNode extends ASTNode {
     public String toString() {
         return "#include <iostream>";
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "Program:");
+        for (ASTNode statement : statements) {
+            statement.printTree(indent + "  ");
+        }
+    }
 }

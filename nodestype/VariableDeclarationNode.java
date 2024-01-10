@@ -32,4 +32,9 @@ public class VariableDeclarationNode extends ASTNode {
             return "int " + identifier + "[" + arraySize + "];";
         }
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "VariableDeclaration: " + identifier);
+    }
 }

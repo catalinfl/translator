@@ -25,4 +25,12 @@ public class IfNode extends ASTNode {
             return "";
         }
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "If:");
+        condition.printTree(indent + "  ");
+        body.printTree(indent + "  ");
+    }
+    
 }

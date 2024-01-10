@@ -13,4 +13,12 @@ public class ArrayAccessNode extends ASTNode {
     public String evaluate() {
         return identifier + "[" + index.evaluate().toString() + "]";
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "ArrayAccess:");
+        System.out.println(indent + "  " + identifier);
+        index.printTree(indent + "  ");
+    }
+    
 }

@@ -6,4 +6,10 @@ public abstract class ASTNode {
     public void printTree(String indent) {
         System.out.println(indent + this.toString());
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
+    
 }

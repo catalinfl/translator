@@ -26,4 +26,12 @@ public class BlockNode extends ASTNode {
         }
         return sb.toString();
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "Block:");
+        for (ASTNode statement : this.statements) {
+            statement.printTree(indent + "  ");
+        }
+    }
 }

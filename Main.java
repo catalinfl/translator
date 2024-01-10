@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 
 import nodestype.ASTNode;
+import java.io.*;
 
 public class Main {
     
 public static void main(String args[]) {
     if (args.length < 1) {
-        System.out.println("Please provide a file name as a command-line argument");
+        System.out.println("Provide program.txt as argument");
         return;
     }
 
@@ -15,19 +16,32 @@ public static void main(String args[]) {
     lexer.Tokenize();
     ArrayList<Token> tokens = lexer.getTokens();
 
-    for (Token token : tokens) {
-        System.out.println(token.getType() + " " + token.getValue());
-    }
+    FileWriter fw = null;
     try {
-            Parser parser = new Parser(tokens);
-            ASTNode root = parser.parse();
-            root.printTree("");
-            Translate translate = new Translate();
-            String s = translate.toCCode(root, 0);
-            System.out.println(s);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        fw = new FileWriter("tokens.txt");
+        for (Token token : tokens) {
+            fw.write(token.getType() + " " + token.getValue() + " " + token.getLine() + "\n");
         }
+        fw.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    Parser parser = new Parser(tokens);
+    ASTNode root = parser.parse();
+
+    // root.printTree(""); accesare AST
+
+    Translate translate = new Translate();
+    String s = translate.toCCode(root, 0);
+
+    try {
+        fw = new FileWriter("output.c");
+        fw.write(s);
+        fw.close();
+    } catch (IOException e) {
+        e.printStackTrace();
     }
 }
 
+}

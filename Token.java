@@ -7,6 +7,7 @@ public class Token {
         MULTIPLY,
         EQUAL,
         SMALLER_THAN,
+        AND,
         DIVIDE,
         PARANTHESIS_OPEN,
         PARANTHESIS_CLOSE,

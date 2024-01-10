@@ -34,4 +34,13 @@ public class ArrayAssignmentNode extends ASTNode {
         String expression = this.expression.evaluate();
         return varName + "[" + index + "] = " + expression;
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "ArrayAssignment:");
+        System.out.println(indent + "  " + this.varName);
+        System.out.println(indent + "  " + this.arrayIndex);
+        expression.printTree(indent + "  ");
+    }
+    
 }

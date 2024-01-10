@@ -22,4 +22,12 @@ public class AssignmentNode extends ASTNode {
         return this.identifier + " = " + this.expression.evaluate() + ";";
     }
 
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "Assignment:");
+        System.out.println(indent + "  " + this.identifier);
+        expression.printTree(indent + "  ");
+    }
+    
+
 }

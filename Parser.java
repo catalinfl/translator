@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 import nodestype.ASTNode;
+import nodestype.AndNode;
 import nodestype.ArrayAccessNode;
 import nodestype.ArrayAssignmentNode;
 import nodestype.ArrayDeclarationNode;
@@ -139,7 +140,7 @@ public class Parser extends ASTNode {
 
     private ASTNode whileStatement() {
         consume(Token.Type.WHILE);
-        ASTNode condition = expression();
+        ASTNode condition = parseAndExpression();
         BlockNode body = new BlockNode();
         Token token = tokens.get(pos);
         while (token.getType() != Token.Type.END) {
@@ -172,6 +173,16 @@ public class Parser extends ASTNode {
         return new WhileNode(condition, body);
     }
 
+
+    private ASTNode parseAndExpression() {
+    ASTNode left = expression();
+    if (pos < tokens.size() && tokens.get(pos).getType() == Token.Type.AND) {
+        consume(Token.Type.AND);
+        ASTNode right = expression();
+        return new AndNode(left, right);
+    }
+    return left;
+}
     
     
 

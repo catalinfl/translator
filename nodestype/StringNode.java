@@ -20,4 +20,5 @@ public class StringNode extends ASTNode {
     public void printTree(String indent) {
         System.out.println(indent + "String: " + value);
     }
+
 }

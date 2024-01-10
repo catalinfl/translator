@@ -13,4 +13,10 @@ public class ArrayDeclarationNode extends ASTNode {
     public String evaluate() {
         return "int " + varName + "[" + arraySize + "];";
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "ArrayDeclaration: " + varName);
+    }
+    
 }

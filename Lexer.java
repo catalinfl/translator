@@ -21,7 +21,7 @@ public class Lexer {
             while ((line = reader.readLine()) != null) {
                 tokens.addAll(tokenizeLine(line));
             }
-            tokens.add(new Token(Token.Type.EOF, "EOF", 0));
+            tokens.add(new Token(Token.Type.EOF, "EOF", -1));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,6 @@ public class Lexer {
                     continue;
                 }
                 if (character == '#') {
-
                     while ((c = pushbackReader.read()) != -1) {
                         character = (char) c;
                         if (character == '\n') {
@@ -48,14 +47,11 @@ public class Lexer {
                         }
                     }
                     continue;
-
                 }
                 if (character == '\n') {
                     lineNo++;
-                }
-                else if (character == '\r') {  
                     continue;
-                } 
+                }
                 else if (Character.isLetter(character)) {
                     String word = String.valueOf(character);
                     while (Character.isLetterOrDigit((char) (c = pushbackReader.read()))) {
@@ -112,19 +108,20 @@ public class Lexer {
                     tokens.add(new Token(Token.Type.PARANTHESIS_OPEN, String.valueOf(character), lineNo));
                 } else if (character == ')') {
                     tokens.add(new Token(Token.Type.PARANTHESIS_CLOSE, String.valueOf(character), lineNo));
-                } else if (character == '=') {
+                } else if (character == '&') {
+                    tokens.add(new Token(Token.Type.AND, String.valueOf(character), lineNo));
+                }
+                 else if (character == '=') {
                     tokens.add(new Token(Token.Type.EQUALS, String.valueOf(character), lineNo));
                     String number = "";
-                    // Skip over any whitespace characters
                     while (Character.isWhitespace((char) (c = pushbackReader.read()))) {
                         // do nothing
                     }
-                    // Now start reading the number
+
                     while (Character.isDigit((char) c)) {
                         number += String.valueOf((char) c);
                         c = pushbackReader.read();
                     }
-                    // Only add the NUMBER token after you've read the number
                     if (!number.isEmpty()) {
                         tokens.add(new Token(Token.Type.NUMBER, number, lineNo));
                     }
@@ -149,11 +146,9 @@ public class Lexer {
                     while ((char) (c = pushbackReader.read()) != ']') {
                         insideBrackets += String.valueOf((char) c);
                     }
-                    // Tokenize the content inside the brackets
                     ArrayList<Token> insideTokens = tokenizeLine(insideBrackets);
                     tokens.addAll(insideTokens);
                     tokens.add(new Token(Token.Type.BRACKET_CLOSE, "]", lineNo));
-                    // Add this line to consume the whitespace characters
                     while (Character.isWhitespace((char) (c = pushbackReader.read()))) {
                         // do nothing
                     }

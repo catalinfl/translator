@@ -25,4 +25,11 @@ public class WhileNode extends ASTNode {
         }
         return result.toString();
     }
+
+    @Override
+    public void printTree(String indent) {
+        System.out.println(indent + "While:");
+        condition.printTree(indent + "  ");
+        body.printTree(indent + "  ");
+    }
 }
